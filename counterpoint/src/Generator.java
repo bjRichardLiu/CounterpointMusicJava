@@ -214,7 +214,7 @@ public class Generator {
 
         Scanner scanner = new Scanner(System.in);
 
-        listArray = new List[59049];
+        listArray = new List[32768];
 
 
         //todo input
@@ -291,11 +291,11 @@ public class Generator {
 
 
         //todo add 10th
-        for (a = 0; a < 9; a++) {
-            for (b = 0; b < 9; b++) {
-                for (c = 0; c < 9; c++) {
-                    for (d = 0; d < 9; d++) {
-                        for (e = 0; e < 9; e++) {
+        for (a = 1; a < 9; a++) {
+            for (b = 1; b < 9; b++) {
+                for (c = 1; c < 9; c++) {
+                    for (d = 1; d < 9; d++) {
+                        for (e = 1; e < 9; e++) {
                             int[] listToAdd;
                             listToAdd = new int[8];
 
@@ -308,9 +308,9 @@ public class Generator {
 
                             switch (a) {
                                 //Unison
-                                case 0:
-                                    listToAdd[1] = inputProcessed[1];
-                                    break;
+                                //case 0:
+                                    //listToAdd[1] = inputProcessed[1];
+                                    //break;
                                 //minor 3rd
                                 case 1:
                                     listToAdd[1] = inputProcessed[1] + 3;
@@ -347,10 +347,6 @@ public class Generator {
                             }
 
                             switch (b) {
-                                //Unison
-                                case 0:
-                                    listToAdd[2] = inputProcessed[2];
-                                    break;
                                 //minor 3rd
                                 case 1:
                                     listToAdd[2] = inputProcessed[2] + 3;
@@ -387,10 +383,6 @@ public class Generator {
                             }
 
                             switch (c) {
-                                //Unison
-                                case 0:
-                                    listToAdd[3] = inputProcessed[3];
-                                    break;
                                 //minor 3rd
                                 case 1:
                                     listToAdd[3] = inputProcessed[3] + 3;
@@ -427,10 +419,6 @@ public class Generator {
                             }
 
                             switch (d) {
-                                //Unison
-                                case 0:
-                                    listToAdd[4] = inputProcessed[4];
-                                    break;
                                 //minor 3rd
                                 case 1:
                                     listToAdd[4] = inputProcessed[4] + 3;
@@ -467,10 +455,6 @@ public class Generator {
                             }
 
                             switch (e) {
-                                //Unison
-                                case 0:
-                                    listToAdd[5] = inputProcessed[5];
-                                    break;
                                 //minor 3rd
                                 case 1:
                                     listToAdd[5] = inputProcessed[5] + 3;
@@ -510,7 +494,8 @@ public class Generator {
                             list1 = new List(listToAdd, true);
 
 
-                            int positionInArray = a * 9 * 9 * 9 * 9 + b * 9 * 9 * 9 + c * 9 * 9 + d * 9 + e;
+                            int positionInArray = (a - 1) * 8 * 8 * 8 * 8 + (b - 1) * 8 * 8 * 8 + (c - 1) * 8 * 8
+                                    + (d - 1) * 8 + (e - 1);
 
                             listArray[positionInArray] = list1;
                         }
@@ -522,7 +507,7 @@ public class Generator {
         }
 
 
-        for (int i = 0; i < 59049; i++) {
+        for (int i = 0; i < 32768; i++) {
             List listObjToCheck = listArray[i];
             int[] listToCheck = listObjToCheck.getList();
 
@@ -586,7 +571,18 @@ public class Generator {
                         listArray[i].setCheck(false);
                     }
                 }
-                //todo check for leaps
+
+                if ((listToCheck[k + 1] - inputProcessed[k + 1]) == 12 ||
+                        (listToCheck[k + 1] - inputProcessed[k + 1]) == 7) {
+                    if ((listToCheck[k + 1] > listToCheck[k]) && (inputProcessed[k + 1] > inputProcessed[k])) {
+                        listArray[i].setCheck(false);
+                    }
+
+                    if ((listToCheck[k + 1] < listToCheck[k]) && (inputProcessed[k + 1] < inputProcessed[k])) {
+                        listArray[i].setCheck(false);
+                    }
+
+                }
                 //Check for leaps if they are 3rd, 4th, 5th, or 6th
                 if (Math.abs((listToCheck[k] - listToCheck[k + 1])) != 0 &&
                         Math.abs((listToCheck[k] - listToCheck[k + 1])) != 1 &&
@@ -609,7 +605,7 @@ public class Generator {
 
 
                     if (Math.abs((listToCheck[o] - listToCheck[o + 1])) >= 4) {
-                        if ((Math.abs((listToCheck[o + 1] - listToCheck[o + 2])) >= 4)) {
+                        if ((Math.abs((listToCheck[o + 1] - listToCheck[o + 2])) >= 2)) {
                             listArray[i].setCheck(false);
                         }
                     }
@@ -635,7 +631,7 @@ public class Generator {
         System.out.println("\nResults: \n");
 
         int answerCount = 0;
-        for (int w = 0; w < 59049; w++) {
+        for (int w = 0; w < 32768; w++) {
             if (listArray[w].isCheck()) {
                 answerCount++;
 
