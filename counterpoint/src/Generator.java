@@ -1,7 +1,9 @@
 import java.util.ArrayList;
-import java.util.Optional;
+import java.lang.String;
+import java.util.Scanner;
 
 public class Generator {
+
 
     /**
      *
@@ -16,7 +18,7 @@ public class Generator {
 
 
 
-    public int transfer(String note) {
+    public static int transferToInt(String note) {
         int noteInt = 0;
         int noteNum = Integer.parseInt(note.substring(note.length() - 1));
 
@@ -40,13 +42,116 @@ public class Generator {
             noteInt += 11;
         }
 
-        if (note.contains("♯")) {
+        if (note.contains("#")) {
             noteInt += 1;
-        } else if (note.contains("♭")) {
+        } else if (note.contains("b")) {
             noteInt += -1;
         }
 
         return noteInt;
+    }
+
+    //todo determine the scale
+    public static String transferToNote(int noteInt, String scale) {
+        String note = null;
+
+        //sharp is true, C is also in sharp
+        boolean sharpOrFlat = true;
+
+        int noteName = (int)noteInt % 12;
+        int noteOctave = (int)(noteInt / 12) - 2;
+
+        if (scale.equalsIgnoreCase("F") || scale.contains("b")) {
+            sharpOrFlat = false;
+        }
+
+        if (sharpOrFlat) {
+            switch (noteName) {
+                case 0:
+                    note = "C" + noteOctave;
+                    break;
+                case 1:
+                    note = "C#" + noteOctave;
+                    break;
+                case 2:
+                    note = "D" + noteOctave;
+                    break;
+                case 3:
+                    note = "D#" + noteOctave;
+                    break;
+                case 4:
+                    note = "E" + noteOctave;
+                    break;
+                case 5:
+                    note = "F" + noteOctave;
+                    break;
+                case 6:
+                    note = "F#" + noteOctave;
+                    break;
+                case 7:
+                    note = "G" + noteOctave;
+                    break;
+                case 8:
+                    note = "G#" + noteOctave;
+                    break;
+                case 9:
+                    note = "A" + noteOctave;
+                    break;
+                case 10:
+                    note = "A#" + noteOctave;
+                    break;
+                case 11:
+                    note = "B" + noteOctave;
+                    break;
+                default:
+                    note = "error";
+                    break;
+            }
+        } else {
+            switch (noteName) {
+                case 0:
+                    note = "C" + noteOctave;
+                    break;
+                case 1:
+                    note = "Db" + noteOctave;
+                    break;
+                case 2:
+                    note = "D" + noteOctave;
+                    break;
+                case 3:
+                    note = "Eb" + noteOctave;
+                    break;
+                case 4:
+                    note = "E" + noteOctave;
+                    break;
+                case 5:
+                    note = "F" + noteOctave;
+                    break;
+                case 6:
+                    note = "Gb" + noteOctave;
+                    break;
+                case 7:
+                    note = "G" + noteOctave;
+                    break;
+                case 8:
+                    note = "Ab" + noteOctave;
+                    break;
+                case 9:
+                    note = "A" + noteOctave;
+                    break;
+                case 10:
+                    note = "Bb" + noteOctave;
+                    break;
+                case 11:
+                    note = "B" + noteOctave;
+                    break;
+                default:
+                    note = "error";
+                    break;
+            }
+        }
+
+        return note;
     }
 
     /**
@@ -107,12 +212,37 @@ public class Generator {
         List[] listArray;
         ArrayList<List> listArrayListChecked;
 
-        listArray = new List[16807];
+        Scanner scanner = new Scanner(System.in);
+
+        listArray = new List[59049];
 
 
         //todo input
 
+        String[] inputArray = new String[8];
+
+        System.out.println("Please use # or b to indicate sharps or flats!");
+
+        System.out.println("Please enter the melody with comma between each note: ");
+        String inputString = scanner.nextLine();
+        scanner.close();
+
+        inputArray = inputString.split(",");
+
         int[] inputProcessed = new int[8];
+
+        try {
+
+            for (int p = 0; p < 8; p++) {
+                inputProcessed[p] = transferToInt(inputArray[p]);
+
+            }
+        } catch (Exception e) {
+            System.out.println("Please check the melody you entered!");
+        }
+
+
+        /**int[] inputProcessed = new int[8];
         inputProcessed[0] = 60;
         inputProcessed[1] = 62;
         inputProcessed[2] = 64;
@@ -121,6 +251,9 @@ public class Generator {
         inputProcessed[5] = 64;
         inputProcessed[6] = 62;
         inputProcessed[7] = 60;
+
+         C3,D3,E3,G3,F3,E3,D3,C3
+         */
 
         int[] availableNotes;
         availableNotes = new int[7];
@@ -157,11 +290,12 @@ public class Generator {
         }
 
 
-        for (a = 0; a < 7; a++) {
-            for (b = 0; b < 7; b++) {
-                for (c = 0; c < 7; c++) {
-                    for (d = 0; d < 7; d++) {
-                        for (e = 0; e < 7; e++) {
+        //todo add 10th
+        for (a = 0; a < 9; a++) {
+            for (b = 0; b < 9; b++) {
+                for (c = 0; c < 9; c++) {
+                    for (d = 0; d < 9; d++) {
+                        for (e = 0; e < 9; e++) {
                             int[] listToAdd;
                             listToAdd = new int[8];
 
@@ -201,6 +335,14 @@ public class Generator {
                                 case 6:
                                     listToAdd[1] = inputProcessed[1] + 12;
                                     break;
+                                //minor 10th
+                                case 7:
+                                    listToAdd[1] = inputProcessed[1] + 15;
+                                    break;
+                                //major 10th
+                                case 8:
+                                    listToAdd[1] = inputProcessed[1] + 16;
+                                    break;
 
                             }
 
@@ -232,6 +374,14 @@ public class Generator {
                                 //Octave
                                 case 6:
                                     listToAdd[2] = inputProcessed[2] + 12;
+                                    break;
+                                //minor 10th
+                                case 7:
+                                    listToAdd[2] = inputProcessed[2] + 15;
+                                    break;
+                                //major 10th
+                                case 8:
+                                    listToAdd[2] = inputProcessed[2] + 16;
                                     break;
 
                             }
@@ -265,6 +415,14 @@ public class Generator {
                                 case 6:
                                     listToAdd[3] = inputProcessed[3] + 12;
                                     break;
+                                //minor 10th
+                                case 7:
+                                    listToAdd[3] = inputProcessed[3] + 15;
+                                    break;
+                                //major 10th
+                                case 8:
+                                    listToAdd[3] = inputProcessed[3] + 16;
+                                    break;
 
                             }
 
@@ -296,6 +454,14 @@ public class Generator {
                                 //Octave
                                 case 6:
                                     listToAdd[4] = inputProcessed[4] + 12;
+                                    break;
+                                //minor 10th
+                                case 7:
+                                    listToAdd[4] = inputProcessed[4] + 15;
+                                    break;
+                                //major 10th
+                                case 8:
+                                    listToAdd[4] = inputProcessed[4] + 16;
                                     break;
 
                             }
@@ -329,6 +495,14 @@ public class Generator {
                                 case 6:
                                     listToAdd[5] = inputProcessed[5] + 12;
                                     break;
+                                //minor 10th
+                                case 7:
+                                    listToAdd[5] = inputProcessed[5] + 15;
+                                    break;
+                                //major 10th
+                                case 8:
+                                    listToAdd[5] = inputProcessed[5] + 16;
+                                    break;
 
                             }
 
@@ -336,7 +510,7 @@ public class Generator {
                             list1 = new List(listToAdd, true);
 
 
-                            int positionInArray = a * 7 * 7 * 7 * 7 + b * 7 * 7 * 7 + c * 7 * 7 + d * 7 + e;
+                            int positionInArray = a * 9 * 9 * 9 * 9 + b * 9 * 9 * 9 + c * 9 * 9 + d * 9 + e;
 
                             listArray[positionInArray] = list1;
                         }
@@ -348,7 +522,7 @@ public class Generator {
         }
 
 
-        for (int i = 0; i < 16807; i++) {
+        for (int i = 0; i < 59049; i++) {
             List listObjToCheck = listArray[i];
             int[] listToCheck = listObjToCheck.getList();
 
@@ -356,7 +530,7 @@ public class Generator {
 
 
             //check individual notes
-            for (int j = 0; j < 7; j++) {
+            for (int j = 0; j < 8; j++) {
                 //Check for notes not in the scale
 
                 int noteToCheck = listToCheck[j];
@@ -383,7 +557,7 @@ public class Generator {
 
             int highestNoteCount = 0;
 
-            for (int j1 = 0; j1 < 7; j1++) {
+            for (int j1 = 0; j1 < 8; j1++) {
                 if (listToCheck[j1] == highestNote) {
                     highestNoteCount++;
                 }
@@ -398,7 +572,7 @@ public class Generator {
 
 
             //check for two notes
-            for (int k = 0; k < 6; k++) {
+            for (int k = 0; k < 7; k++) {
                 //Check for parallel fifths
                 if ((listToCheck[k] - inputProcessed[k]) % 12 == 7) {
                     if ((listToCheck[k + 1] - inputProcessed[k + 1]) % 12 == 7) {
@@ -427,40 +601,62 @@ public class Generator {
                     listArray[i].setCheck(false);
                 }
 
-                for (int o = 0; o < 5; o++) {
+                for (int o = 0; o < 6; o++) {
 
-                    if ((listToCheck[o] == listToCheck[o + 1]) && ((listToCheck[o + 1] == listToCheck[o + 2]))) {
+                    if ((listToCheck[o] == listToCheck[o + 1]) || ((listToCheck[o + 1] == listToCheck[o + 2]))) {
                         listArray[i].setCheck(false);
                     }
 
 
+                    if (Math.abs((listToCheck[o] - listToCheck[o + 1])) >= 4) {
+                        if ((Math.abs((listToCheck[o + 1] - listToCheck[o + 2])) >= 4)) {
+                            listArray[i].setCheck(false);
+                        }
+                    }
+
                 }
 
+
+
+
                 for (int o1 = 0; o1 < 4; o1++) {
-                    if (Math.abs((listToCheck[o1] - listToCheck[o1 + 1])) >= 2) {
-                        if ((Math.abs((listToCheck[o1 + 1] - listToCheck[o1 + 2])) >= 2) ||
-                                (Math.abs((listToCheck[o1 + 2] - listToCheck[o1 + 3])) >= 2)) {
+                    if (Math.abs((listToCheck[o1] - listToCheck[o1 + 1])) >= 4) {
+                        if ((Math.abs((listToCheck[o1 + 2] - listToCheck[o1 + 3])) >= 2)) {
                             listArray[i].setCheck(false);
                         }
                     }
                 }
 
+
+
             }
         }
 
-        //todo convert to pitch name
-        for (int w = 0; w < 16807; w++) {
-            if (listArray[w].isCheck()) {
+        System.out.println("\nResults: \n");
 
+        int answerCount = 0;
+        for (int w = 0; w < 59049; w++) {
+            if (listArray[w].isCheck()) {
+                answerCount++;
+
+                System.out.println("No." + answerCount);
 
                 for (int l = 0; l < 7; l++) {
-                    System.out.print(listArray[w].getList()[l] + ", ");
+                    System.out.print(transferToNote(listArray[w].getList()[l], inputArray[0]) + ",");
                 }
-                System.out.print(listArray[w].getList()[7]);
+                System.out.print(transferToNote(listArray[w].getList()[7], inputArray[0]));
                 System.out.println();
+                System.out.println(inputString + "\n");
             }
 
 
+        }
+
+        if (answerCount == 0) {
+            System.out.println("No Melody Found! Please enter a new melody.");
+
+        } else {
+            System.out.println("Total counterpoint melody generated: " + answerCount);
         }
 
 
