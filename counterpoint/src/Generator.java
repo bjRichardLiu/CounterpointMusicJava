@@ -16,16 +16,17 @@ public class Generator {
      *
      */
 
-
-
     public static int transferToInt(String note) {
+        //The midi value of the note, initialized to 0
         int noteInt = 0;
+        //The octave the note is in
         int noteNum = Integer.parseInt(note.substring(note.length() - 1));
 
         //C3 is 60
 
         noteInt += (noteNum + 2) * 12;
 
+        //Determine the note
         if (note.contains("C")) {
             noteInt += 0;
         } else if (note.contains("D")) {
@@ -42,30 +43,46 @@ public class Generator {
             noteInt += 11;
         }
 
+        //Determine if it has a sharp of flat
         if (note.contains("#")) {
             noteInt += 1;
         } else if (note.contains("b")) {
             noteInt += -1;
         }
 
+        //returns the note value
         return noteInt;
     }
 
-    //todo determine the scale
+    /**
+     * Transfer integer into the note it associated with. Using scale information to determine
+     * if it's a sharp or a flat
+     *
+     *
+     * @param noteInt
+     * @param scale
+     * @return
+     */
+
     public static String transferToNote(int noteInt, String scale) {
         String note = null;
 
         //sharp is true, C is also in sharp
         boolean sharpOrFlat = true;
 
+        //Determine the pitch name
         int noteName = (int)noteInt % 12;
+        //Determine the octave of the pitch
         int noteOctave = (int)(noteInt / 12) - 2;
 
+        //Check if the scale is one of the scale with flat, if so, it will have a "b" or it is F major
         if (scale.equalsIgnoreCase("F") || scale.contains("b")) {
             sharpOrFlat = false;
         }
 
+        //Determine the pitch
         if (sharpOrFlat) {
+            //Scales with sharp, and C major
             switch (noteName) {
                 case 0:
                     note = "C" + noteOctave;
@@ -109,6 +126,7 @@ public class Generator {
             }
         } else {
             switch (noteName) {
+                //Scales with flat
                 case 0:
                     note = "C" + noteOctave;
                     break;
@@ -154,56 +172,7 @@ public class Generator {
         return note;
     }
 
-    /**
-     *
-     * first note and last note should be an octave
-     *
-     * @param inputProcessed
-     * @return
 
-    public int[] firstAndLastProcess(int[] inputProcessed) {
-        inputProcessed[0] += 12;
-
-        inputProcessed[5] += 12;
-        return inputProcessed;
-
-    }
-     */
-
-    /**
-     * use the first note to determine the key of the input melody, then determine the available notes in the scale
-     *
-     * can only handle major scales
-     *
-     *
-     * @param inputProcessed
-     * @return
-     */
-
-
-    /**public static int[] availableNotes(int[] inputProcessed) {
-        int[] availableNotes = new int[7];
-        int tonic = (int) inputProcessed[0] % 12;
-
-        availableNotes[0] = tonic;
-        availableNotes[1] = tonic + 2;
-        availableNotes[2] = tonic + 4;
-        availableNotes[3] = tonic + 5;
-        availableNotes[4] = tonic + 7;
-        availableNotes[5] = tonic + 9;
-        availableNotes[6] = tonic + 11;
-
-        for (int i = 0; i < 7; i++) {
-            if (availableNotes[i] >= 12) {
-                availableNotes[i] -= 12;
-
-                System.out.println("i: " + availableNotes[i]);
-            }
-        }
-
-        return availableNotes;
-    }
-     */
 
 
 
@@ -242,6 +211,7 @@ public class Generator {
         }
 
 
+        //A test case
         /**int[] inputProcessed = new int[8];
         inputProcessed[0] = 60;
         inputProcessed[1] = 62;
@@ -255,6 +225,8 @@ public class Generator {
          C3,D3,E3,G3,F3,E3,D3,C3
          */
 
+        //Use the first note to determine the key of the input melody, then determine the available notes in the scale
+        // can only handle major scales
         int[] availableNotes;
         availableNotes = new int[7];
         int tonic;
@@ -281,6 +253,8 @@ public class Generator {
         int d;
         int e;
 
+        //Writes the seventh note. If the note is scale degree 1, 2, 3, or 5, it's a major sixth, all other scale
+        //degrees will be minor sixth
         int f = inputProcessed[6] - inputProcessed[0];
         int seventh;
         if (f == 0 || f == 2 || f == 5 || f == 7) {
@@ -289,8 +263,7 @@ public class Generator {
             seventh = inputProcessed[6] + 8;
         }
 
-
-        //todo add 10th
+        //Writes all the possible melodies
         for (a = 1; a < 9; a++) {
             for (b = 1; b < 9; b++) {
                 for (c = 1; c < 9; c++) {
@@ -494,6 +467,7 @@ public class Generator {
                             list1 = new List(listToAdd, true);
 
 
+                            //It's like converting octal to decimal, in order to number all the melodies generated
                             int positionInArray = (a - 1) * 8 * 8 * 8 * 8 + (b - 1) * 8 * 8 * 8 + (c - 1) * 8 * 8
                                     + (d - 1) * 8 + (e - 1);
 
@@ -507,6 +481,8 @@ public class Generator {
         }
 
 
+        //Check all melodies with first species counterpoint rules, if it doesn't fit a rule, the melody will be marked
+        //false on the check boolean
         for (int i = 0; i < 32768; i++) {
             List listObjToCheck = listArray[i];
             int[] listToCheck = listObjToCheck.getList();
@@ -572,6 +548,7 @@ public class Generator {
                     }
                 }
 
+                //Check for similar motion fifth and eighth
                 if ((listToCheck[k + 1] - inputProcessed[k + 1]) == 12 ||
                         (listToCheck[k + 1] - inputProcessed[k + 1]) == 7) {
                     if ((listToCheck[k + 1] > listToCheck[k]) && (inputProcessed[k + 1] > inputProcessed[k])) {
@@ -597,13 +574,14 @@ public class Generator {
                     listArray[i].setCheck(false);
                 }
 
+                //Check 3 notes
                 for (int o = 0; o < 6; o++) {
-
+                    //Check for repeated notes
                     if ((listToCheck[o] == listToCheck[o + 1]) || ((listToCheck[o + 1] == listToCheck[o + 2]))) {
                         listArray[i].setCheck(false);
                     }
 
-
+                    //Check if the melody leaps after a leap
                     if (Math.abs((listToCheck[o] - listToCheck[o + 1])) >= 4) {
                         if ((Math.abs((listToCheck[o + 1] - listToCheck[o + 2])) >= 2)) {
                             listArray[i].setCheck(false);
@@ -615,6 +593,7 @@ public class Generator {
 
 
 
+                //Check if the melody has a long stepwise motion after a leap
                 for (int o1 = 0; o1 < 4; o1++) {
                     if (Math.abs((listToCheck[o1] - listToCheck[o1 + 1])) >= 4) {
                         if ((Math.abs((listToCheck[o1 + 2] - listToCheck[o1 + 3])) >= 2)) {
@@ -628,6 +607,7 @@ public class Generator {
             }
         }
 
+        //Prints the result
         System.out.println("\nResults: \n");
 
         int answerCount = 0;
@@ -635,13 +615,17 @@ public class Generator {
             if (listArray[w].isCheck()) {
                 answerCount++;
 
+                //Gives out the count for the melody
                 System.out.println("No." + answerCount);
 
+                //Transfer the integers into notes, using the first note if the input as the name of the scale
+                //then prints out the result
                 for (int l = 0; l < 7; l++) {
                     System.out.print(transferToNote(listArray[w].getList()[l], inputArray[0]) + ",");
                 }
                 System.out.print(transferToNote(listArray[w].getList()[7], inputArray[0]));
                 System.out.println();
+                //Prints out the original melody so that the user can see which melody they prefer
                 System.out.println(inputString + "\n");
             }
 
@@ -654,9 +638,6 @@ public class Generator {
         } else {
             System.out.println("Total counterpoint melody generated: " + answerCount);
         }
-
-
-        //main method
-    }
+    } //main method
 
 }
