@@ -1,4 +1,4 @@
-# JavaCounterpointMusic
+# CounterpointMusicJava
 The program writes 8 measures first-species counterpoint counterpoint.
 
 There are still functions in the program needs to be updated.
